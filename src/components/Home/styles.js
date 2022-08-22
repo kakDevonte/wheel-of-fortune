@@ -59,8 +59,7 @@ export const Title = styled.h1`
 export const Winners = styled.div`
   text-align: center;
   padding: 15px;
-  max-height: 340px;
-
+  height: 350px;
 
   background: linear-gradient(180deg, #3598df 0%, #006bb8 100%);
   box-shadow: inset 1px 5px 4px #1b379f;
@@ -68,6 +67,6 @@ export const Winners = styled.div`
 `;
 
 export const WinnersContainer = styled.div`
-  max-height: 200px;
+  max-height: 250px;
   overflow-y: auto;
 `;

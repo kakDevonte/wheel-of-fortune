@@ -41,6 +41,14 @@ const drawWheel = (canvasRef, data) => {
       ctx.stroke();
       ctx.fill();
 
+
+      let g = ctx.createRadialGradient(centerX, centerX, 0, outsideRadius, outsideRadius, outsideRadius);
+      g.addColorStop(0, "rgba(0,0,0,0)");
+      g.addColorStop(1, "rgba(0,0,0,0.3)");
+
+      ctx.fillStyle = g;
+      ctx.fill();
+
       ctx.save();
 
       ctx.strokeStyle = 1 <= 0 ? 'transparent' : 1;
@@ -58,7 +66,9 @@ const drawWheel = (canvasRef, data) => {
         );
         ctx.closePath();
         ctx.stroke();
+
       }
+
 
       ctx.fillStyle = '#fff';
 

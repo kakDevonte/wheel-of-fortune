@@ -4,7 +4,16 @@ import { Button } from '../Button';
 import { InfoBlock } from '../InfoBlock';
 import { Winner } from '../Winner';
 import { WinWindow } from '../WinWindow';
-import {Buttons, Content, HomePage, Title, WheelBox, Winners, WinnersContainer} from './styles';
+import {
+  Buttons,
+  Content,
+  HomePage,
+  Title,
+  WheelBox,
+  Winners,
+  WinnersContainer,
+} from './styles';
+import { useWheelActions, useWheelState } from '../../contexts/wheel-context';
 
 const data = [
   { label: 10 },
@@ -22,20 +31,72 @@ export const Home = () => {
   const [mustSpin, setMustSpin] = React.useState(false);
   const [showWin, setShowWin] = React.useState(false);
   const [isMount, setIsMount] = React.useState(false);
+  const [jackpot, setJackpot] = React.useState(0);
+  const { changeBalance, getWinners, addWinner } = useWheelActions();
+  const { user, winners, userInfo } = useWheelState();
 
   React.useEffect(() => {
     setIsMount(true);
+    getWinners();
   }, []);
+
+  React.useEffect(() => {
+    if (winners.length > 0) {
+      let sum = 1000;
+      for (let winner in winners) {
+        if (data[prizeNumber].label === 'JACKPOT') {
+          sum += jackpot;
+        } else {
+          sum += Number(winners[winner].prize);
+        }
+      }
+      setJackpot(sum);
+    } else {
+      setJackpot(1000);
+    }
+  }, [winners]);
+
+  React.useEffect(() => {
+    if (!mustSpin && isMount) {
+      setShowWin(true);
+
+      //Условие нужное что бы приложение не крашилось без vk-api
+      if (!user) return;
+
+      let balance = 0;
+      if (data[prizeNumber].label === 'JACKPOT') {
+        balance = Number(user.balance) + jackpot;
+      } else {
+        balance = Number(user.balance) + data[prizeNumber].label;
+      }
+      changeBalance({ id: user.id, balance });
+      const { first_name, last_name, photo_100 } = userInfo;
+      const winner = {
+        first_name,
+        last_name,
+        prize:
+          data[prizeNumber].label === 'JACKPOT'
+            ? jackpot
+            : data[prizeNumber].label,
+        isJackpot: data[prizeNumber].label === 'JACKPOT',
+        photo: photo_100,
+        whenWon: new Date(),
+      };
+      addWinner(winner);
+    }
+  }, [mustSpin]);
 
   const handleSpinClick = () => {
     const newPrizeNumber = Math.floor(Math.random() * data.length);
     setPrizeNumber(newPrizeNumber);
     setMustSpin(true);
-  };
 
-  React.useEffect(() => {
-    if (!mustSpin && isMount) setShowWin(true);
-  }, [mustSpin]);
+    //Условие нужное что бы приложение не крашилось без vk-api
+    if (!user) return;
+
+    const balance = Number(user.balance) - 100;
+    changeBalance({ id: user.id, balance });
+  };
 
   return (
     <div>
@@ -56,8 +117,8 @@ export const Home = () => {
             />
           </WheelBox>
           <Buttons>
-            <InfoBlock title={'JACKPOT 1000'} />
-            <InfoBlock title={'BALANCE 100999'} />
+            <InfoBlock title={`JACKPOT ${jackpot}`} />
+            <InfoBlock title={`BALANCE ${user ? user.balance : '0'}`} />
             <Button
               onClick={handleSpinClick}
               title={'SPIN WHEEL'}
@@ -68,9 +129,12 @@ export const Home = () => {
         <Winners>
           <Title>WINNERS</Title>
           <WinnersContainer>
-            {[...Array(14)].map((item, index) => (
-                <Winner key={index} />
-            ))}
+            {winners
+              .slice(0)
+              .reverse()
+              .map((winner, index) => (
+                <Winner key={index} {...winner} />
+              ))}
           </WinnersContainer>
         </Winners>
       </HomePage>
