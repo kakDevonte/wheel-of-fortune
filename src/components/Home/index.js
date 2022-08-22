@@ -4,7 +4,7 @@ import { Button } from '../Button';
 import { InfoBlock } from '../InfoBlock';
 import { Winner } from '../Winner';
 import { WinWindow } from '../WinWindow';
-import { Buttons, Content, HomePage, Title, WheelBox, Winners } from './styles';
+import {Buttons, Content, HomePage, Title, WheelBox, Winners, WinnersContainer} from './styles';
 
 const data = [
   { label: 10 },
@@ -18,8 +18,8 @@ const data = [
 ];
 
 export const Home = () => {
-  const [mustSpin, setMustSpin] = React.useState(false);
   const [prizeNumber, setPrizeNumber] = React.useState(0);
+  const [mustSpin, setMustSpin] = React.useState(false);
   const [showWin, setShowWin] = React.useState(false);
   const [isMount, setIsMount] = React.useState(false);
 
@@ -67,9 +67,11 @@ export const Home = () => {
         </Content>
         <Winners>
           <Title>WINNERS</Title>
-          {[...Array(14)].map((item, index) => (
-            <Winner key={index} />
-          ))}
+          <WinnersContainer>
+            {[...Array(14)].map((item, index) => (
+                <Winner key={index} />
+            ))}
+          </WinnersContainer>
         </Winners>
       </HomePage>
     </div>
