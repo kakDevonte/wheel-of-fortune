@@ -1,0 +1,8 @@
+body{
+    margin: 0;
+    background: radial-gradient(
+            85.48% 79.62% at 50% 50%,
+            #75bdff 0%,
+            #020065 100%
+    );
+}
