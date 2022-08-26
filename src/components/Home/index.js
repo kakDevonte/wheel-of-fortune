@@ -42,12 +42,9 @@ export const Home = () => {
 
   React.useEffect(() => {
     if (winners.length > 0) {
-      let sum = 1000;
+      let sum = 0;
       for (let winner in winners) {
-        if (data[prizeNumber].label === 'JACKPOT') {
-          sum += jackpot;
-        } else {
-          sum += Number(winners[winner].prize);
+          sum += 100;
         }
       }
       setJackpot(sum);
