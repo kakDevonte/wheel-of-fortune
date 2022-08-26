@@ -46,7 +46,6 @@ export const Home = () => {
       for (let winner in winners) {
           sum += 100;
         }
-      }
       setJackpot(sum);
     } else {
       setJackpot(1000);
